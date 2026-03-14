@@ -10,5 +10,5 @@ test_that("summarize_types works correctly", {
   
   expect_equal(nrow(res), 3)
   expect_equal(res$column, c("a", "b", "c"))
-  expect_equal(res$type, c("integer", "character", "logical"))
+  expect_equal(res$class, c("integer", "character", "logical"))
 })
