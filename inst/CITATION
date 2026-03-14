@@ -1,0 +1,10 @@
+citHeader("To cite allowayai in publications use:")
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "allowayai: AI and Sports Analytics Utility Toolkit",
+  author   = person("Ian", "Alloway"),
+  year     = "2026",
+  note     = "R package version 0.2.0",
+  url      = "https://github.com/ianalloway/allowayai"
+)

@@ -1,5 +1,7 @@
 ---
 title: "Getting Started with allowayai"
+author: "Ian Alloway"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Getting Started with allowayai}
@@ -7,44 +9,197 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment  = "#>",
+  fig.width  = 7,
+  fig.height = 4
 )
 ```
 
-```{r setup}
+## Overview
+
+`allowayai` is a utility toolkit for data science, sports analytics, and machine
+learning workflows. It was built to solve the recurring problems that come up when
+you are building predictive models for sports betting markets: How do you size
+your bets correctly? How do you track model performance over time? How do you
+quickly inspect what your data frames actually contain?
+
+This vignette walks through all eight functions in the package using the bundled
+`nfl_lines` dataset.
+
+---
+
+## Installation
+
+```r
+# Install from GitHub
+devtools::install_github("ianalloway/allowayai")
+```
+
+```{r}
 library(allowayai)
 ```
 
-## Introduction
+---
 
-Welcome to `allowayai`, a utility toolkit for data science, sports analytics, and R object exploration. This package was built for the final project and encapsulates several workflows I frequently write about on my Substack.
+## The `nfl_lines` Dataset
 
-## Fractional Kelly Criterion
-
-When building sports betting models, having an edge isn't enough. You need to size your bets correctly. The `calc_kelly()` function helps you do this using the Kelly Criterion, with built-in fractional sizing to reduce variance.
+The package ships with a sample dataset of 100 simulated NFL game betting lines.
+It is an **external dataset** bundled with the package and loaded lazily.
 
 ```{r}
-# 60% model probability, +100 odds (2.0 decimal), Half-Kelly
+data(nfl_lines)
+head(nfl_lines)
+```
+
+The five columns are:
+
+- `game_id`: unique game identifier
+- `team`: the team being bet on
+- `model_prob`: the model's predicted win probability
+- `closing_odds`: the bookmaker's closing decimal odds
+- `outcome`: actual result (1 = win, 0 = loss)
+
+---
+
+## 1. Implied Probability Conversion
+
+Before applying your model, you need to know what the market thinks. The
+`implied_prob()` function converts decimal odds to implied probabilities.
+
+```{r}
+# Single conversion
+implied_prob(2.0)
+
+# Remove the bookmaker's vig from a two-outcome market
+implied_prob(odds = 1.91, remove_vig = TRUE, odds_b = 1.91)
+```
+
+You can apply it across the whole dataset:
+
+```{r}
+nfl_lines$implied <- implied_prob(nfl_lines$closing_odds)
+head(nfl_lines[, c("model_prob", "closing_odds", "implied")])
+```
+
+---
+
+## 2. Edge Summary (S3 Class)
+
+The `edge_summary()` function creates an S3 object of class `edge_summary` that
+captures the distribution of edges (model probability minus implied probability)
+across all games.
+
+```{r}
+es <- edge_summary(
+  model_probs = nfl_lines$model_prob,
+  market_odds = nfl_lines$closing_odds,
+  outcomes    = nfl_lines$outcome,
+  label       = "NFL Sample Model"
+)
+print(es)
+```
+
+The `summary()` method provides a statistical breakdown of the edge distribution:
+
+```{r}
+summary(es)
+```
+
+---
+
+## 3. Plot the Edge Distribution
+
+The `plot_edge()` function creates a `ggplot2` histogram of the edge distribution.
+Positive edges (blue) indicate games where the model sees value; negative edges
+(red) indicate games where the market is more confident than the model.
+
+```{r}
+plot_edge(es)
+```
+
+---
+
+## 4. Kelly Criterion Bet Sizing (S3 Class)
+
+Once you know you have an edge, `calc_kelly()` tells you how much to bet.
+It returns an S3 object of class `kelly_bet`.
+
+```{r}
+# 60% win probability at +100 odds (2.0 decimal), Half-Kelly
 bet <- calc_kelly(prob = 0.60, odds = 2.0, fraction = 0.5)
 print(bet)
 ```
 
-## S4 Classes for Model Tracking
+The `print.kelly_bet()` S3 method formats the output to show your edge, the full
+Kelly percentage, and your recommended fractional bet size.
 
-R's S3 system is great, but sometimes you need the strictness of S4. We include an S4 class `SportsModel` to track backtest performance safely.
+---
 
-```{r}
-model_perf <- make_sports_model(accuracy = 0.683, roi = 0.124, games_tested = 6000)
-model_perf
-```
+## 5. Sports Model Tracker (S4 Class)
 
-## Data Type Summaries
-
-Ever wonder what's really going on under the hood of your data frames? `summarize_types()` breaks it down.
+The `SportsModel` S4 class provides strict, validated storage for backtest
+results. The `make_sports_model()` constructor enforces that accuracy is between
+0 and 1 and that the game count is positive.
 
 ```{r}
-summarize_types(head(mtcars))
+model <- make_sports_model(
+  accuracy     = 0.683,
+  roi          = 0.124,
+  games_tested = 6000
+)
+model
 ```
+
+Attempting to create an invalid object raises an error immediately:
+
+```{r, error = TRUE}
+# This will fail — accuracy cannot exceed 1
+make_sports_model(accuracy = 1.5, roi = 0.10, games_tested = 100)
+```
+
+---
+
+## 6. Combined Model Summary
+
+The `model_summary()` function bridges the S3 and S4 systems. It accepts a
+`SportsModel` S4 object and an optional `edge_summary` S3 object and prints a
+formatted report.
+
+```{r}
+model_summary(model, edge = es)
+```
+
+---
+
+## 7. Data Frame Type Inspection
+
+The `summarize_types()` utility returns a clean data frame showing the class,
+base type, and S4 status of every column. It is useful when working with messy
+data pulled from external APIs.
+
+```{r}
+summarize_types(nfl_lines)
+```
+
+---
+
+## Summary of Classes and Methods
+
+| Object | Class System | Constructor | Methods |
+|---|---|---|---|
+| `kelly_bet` | S3 | `calc_kelly()` | `print.kelly_bet()` |
+| `edge_summary` | S3 | `edge_summary()` | `print.edge_summary()`, `summary.edge_summary()` |
+| `SportsModel` | S4 | `make_sports_model()` | `show()` |
+
+---
+
+## License
+
+`allowayai` is released under the **MIT License**. See `LICENSE` for details.
+
+---
+
+*Ian Alloway — [ianalloway.xyz](https://ianalloway.xyz) | [AllowayAI on Substack](https://allowayai.substack.com)*

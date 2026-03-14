@@ -1,18 +1,36 @@
 Package: allowayai
 Type: Package
 Title: AI and Sports Analytics Utility Toolkit
-Version: 0.1.0
-Author: Ian Alloway <ian@ianalloway.xyz>
-Maintainer: Ian Alloway <ian@ianalloway.xyz>
-Description: A collection of utility functions for data science, sports analytics, and machine learning workflows. Includes tools for fractional Kelly criterion calculation, S3/S4 object inspection, and data visualization helpers.
+Version: 0.2.0
+Date: 2026-03-14
+Authors@R: person(
+    given = "Ian",
+    family = "Alloway",
+    role = c("aut", "cre"),
+    email = "ian@ianalloway.xyz",
+    comment = c(ORCID = "0000-0000-0000-0000")
+  )
+Description: A collection of utility functions for data science, sports analytics,
+    and machine learning workflows. Includes tools for fractional Kelly Criterion
+    bet sizing, S3/S4 object-oriented model tracking, edge visualization, implied
+    probability conversion, and data frame type inspection. Designed for analysts
+    who build predictive models for sports betting markets and need clean,
+    reproducible tools for both research and production use.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
+Language: en-US
+URL: https://github.com/ianalloway/allowayai, https://ianalloway.xyz
+BugReports: https://github.com/ianalloway/allowayai/issues
 RoxygenNote: 7.3.3
 Imports:
-    methods
-Suggests: 
+    methods,
+    ggplot2,
+    stats
+Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+LazyData: true
+Depends:
+    R (>= 4.0.0)
