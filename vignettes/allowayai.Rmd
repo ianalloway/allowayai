@@ -1,0 +1,50 @@
+---
+title: "Getting Started with allowayai"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with allowayai}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(allowayai)
+```
+
+## Introduction
+
+Welcome to `allowayai`, a utility toolkit for data science, sports analytics, and R object exploration. This package was built for the final project and encapsulates several workflows I frequently write about on my Substack.
+
+## Fractional Kelly Criterion
+
+When building sports betting models, having an edge isn't enough. You need to size your bets correctly. The `calc_kelly()` function helps you do this using the Kelly Criterion, with built-in fractional sizing to reduce variance.
+
+```{r}
+# 60% model probability, +100 odds (2.0 decimal), Half-Kelly
+bet <- calc_kelly(prob = 0.60, odds = 2.0, fraction = 0.5)
+print(bet)
+```
+
+## S4 Classes for Model Tracking
+
+R's S3 system is great, but sometimes you need the strictness of S4. We include an S4 class `SportsModel` to track backtest performance safely.
+
+```{r}
+model_perf <- make_sports_model(accuracy = 0.683, roi = 0.124, games_tested = 6000)
+model_perf
+```
+
+## Data Type Summaries
+
+Ever wonder what's really going on under the hood of your data frames? `summarize_types()` breaks it down.
+
+```{r}
+summarize_types(head(mtcars))
+```
