@@ -1,5 +1,37 @@
 Package: allowayai
 Type: Package
+Title: Sports Analytics and Machine Learning Toolkit
+Version: 1.0.0
+Date: 2026-03-14
+Authors@R: person("Ian", "Alloway", email = "ianalloway@usf.edu",
+                   role = c("aut", "cre"),
+                   comment = c(ORCID = "0000-0000-0000-0000"))
+Description: A toolkit for sports analytics and machine learning workflows.
+    Provides functions for converting betting odds to implied probabilities,
+    calculating Kelly Criterion bet sizing, evaluating model edge distributions,
+    and tracking model performance over time. Implements both S3 and S4 class
+    systems for structured analytics objects. Includes utilities for data frame
+    type inspection and bankroll simulation.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Language: en-US
+URL: https://github.com/ianalloway/allowayai
+BugReports: https://github.com/ianalloway/allowayai/issues
+RoxygenNote: 7.3.2
+Imports:
+    methods,
+    ggplot2,
+    stats
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+LazyData: true
+Depends: R (>= 4.0.0)
+Config/testthat/edition: 3
+Package: allowayai
+Type: Package
 Title: AI and Sports Analytics Utility Toolkit
 Version: 0.2.0
 Date: 2026-03-14
