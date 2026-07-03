@@ -59,5 +59,5 @@ result <- simulate_bankroll(
   plot = FALSE
 )
 cat("Median final bankroll:", result$median_final, "\n")
-cat("Probability of profit:", result$prob_profit * 100, "%\n")
+cat("Probability of profit:", result$prob_profit * 100, "percent\n")
 }
