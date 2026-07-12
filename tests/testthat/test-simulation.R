@@ -2,8 +2,8 @@ test_that("calc_kelly validates scalar inputs and fractions", {
   expect_error(calc_kelly(c(0.5, 0.6), 2), "scalar")
   expect_error(calc_kelly(NA_real_, 2), "finite")
   expect_error(calc_kelly(0.5, 1), "greater than 1")
-  expect_error(calc_kelly(0.5, 2, fraction = 0), "in \(0, 1\]")
-  expect_error(calc_kelly(0.5, 2, fraction = 1.1), "in \(0, 1\]")
+  expect_error(calc_kelly(0.5, 2, fraction = 0), "finite numeric scalar")
+  expect_error(calc_kelly(0.5, 2, fraction = 1.1), "finite numeric scalar")
 })
 
 
