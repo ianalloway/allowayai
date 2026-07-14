@@ -18,14 +18,21 @@ devtools::install_github("ianalloway/allowayai")
 
 ## Functions
 
-The package contains the following unique functions:
+The package's actual exports (see `NAMESPACE`):
 
 | Function | Type | Description |
 |---|---|---|
-| `calc_kelly()` | S3 | Calculates optimal bet sizing using the Kelly Criterion |
+| `implied_prob()` | Function | Converts decimal odds to implied probability, with optional vig removal |
+| `calc_kelly()` | S3 constructor | Calculates optimal bet sizing using the Kelly Criterion |
 | `print.kelly_bet()` | S3 method | Pretty-prints a `kelly_bet` object |
+| `edge_summary()` | S3 constructor | Summarizes model-vs-market edge across a set of games |
+| `print.edge_summary()` | S3 method | Pretty-prints an `edge_summary` object |
+| `summary.edge_summary()` | S3 method | Prints the edge distribution summary |
+| `plot_edge()` | Function | ggplot2 histogram of the edge distribution for an `edge_summary` |
+| `simulate_bankroll()` | Function | Monte Carlo simulation of Kelly-sized bankroll growth over many bets |
 | `make_sports_model()` | S4 constructor | Creates a `SportsModel` S4 object |
 | `show()` for `SportsModel` | S4 method | Displays model performance summary |
+| `model_summary()` | Function | Formats a `SportsModel` (and optional `edge_summary`) as a report string |
 | `summarize_types()` | Utility | Returns a data frame of column names and types |
 
 ## Usage
@@ -77,9 +84,9 @@ summarize_types(df)
 
 ## Package Structure
 
-- **S3 classes and methods**: `kelly_bet` class with `print` method
+- **S3 classes and methods**: `kelly_bet` (`print`), `edge_summary` (`print`, `summary`)
 - **S4 classes and methods**: `SportsModel` class with `show` method
-- **Utility functions**: `summarize_types()`
+- **Utility/plotting functions**: `implied_prob()`, `plot_edge()`, `simulate_bankroll()`, `model_summary()`, `summarize_types()`
 - **Vignette**: Full walkthrough in `vignettes/allowayai.Rmd`
 - **Tests**: `testthat` unit tests covering all functions
 - **License**: MIT
