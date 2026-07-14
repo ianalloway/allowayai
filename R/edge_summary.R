@@ -119,7 +119,7 @@ plot_edge <- function(x, bins = 20, ...) {
 
   df <- data.frame(edge = x$edges)
 
-  ggplot2::ggplot(df, ggplot2::aes(x = edge, fill = edge > 0)) +
+  ggplot2::ggplot(df, ggplot2::aes(x = .data[["edge"]], fill = .data[["edge"]] > 0)) +
     ggplot2::geom_histogram(bins = bins, color = "white", alpha = 0.85) +
     ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "#333333", linewidth = 0.8) +
     ggplot2::scale_fill_manual(
